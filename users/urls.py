@@ -27,4 +27,9 @@ urlpatterns = [
         views.CustomUserDeleteAPIView.as_view(),
         name="users_delete",
     ),
+    path(
+        "api/connect-telegram/",
+        views.ConnectTelegramView.as_view(),
+        name="connect-telegram",
+    ),
 ]

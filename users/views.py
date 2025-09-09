@@ -1,11 +1,14 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from tasks.paginators import MyPagination
 from users.models import CustomUser
+from rest_framework import status
 from users.permissions import IsOwnerOrAdmin, IsProfileOwner
 from users.serializers import (CustomUserSerializer, PrivateUserSerializer,
-                               PublicUserSerializer)
+                               PublicUserSerializer, TelegramConnectSerializer,)
 
 
 # POST
@@ -60,3 +63,19 @@ class CustomUserDetailAPIView(generics.RetrieveAPIView):
         if self.request.method == "GET":
             return [IsAuthenticated()]
         return [IsAuthenticated(), IsProfileOwner()]
+
+
+class ConnectTelegramView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+        serializer = TelegramConnectSerializer(
+            instance=request.user, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"status": "Telegram chat ID успешно сохранен"},
+                status=status.HTTP_200_OK,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
