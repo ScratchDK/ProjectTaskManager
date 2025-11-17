@@ -62,3 +62,9 @@ class PrivateUserSerializer(serializers.ModelSerializer):
             "date_joined",
             "payments",
         ]
+
+class TelegramConnectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ["telegram_chat_id"]
+        extra_kwargs = {"telegram_chat_id": {"required": True}}
